@@ -10,13 +10,12 @@ The integration between Azure ARC and ACM should include two separate aspects
 
 === Manage ACM via Azure ARC
 Users should be able to connect their ACM to Azure ARC to manage and monitor it
-[plantuml, target=Connect, format=png]
+[plantuml, target=Connect, format=svg]
 ....
 @startuml
 actor User as User Order 1
-participant "Azure Arc" as ARC Order 2
-participant "Advanced Cluster Management" as ACM Order 3
-participant "OpenShift Cluster" as OCP Order 4
+participant "Azure Arc" as ARC Order 3
+participant "Advanced Cluster Management" as ACM Order 2
 
 title Connect ACM to Azure Arc
 
