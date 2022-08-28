@@ -1,0 +1,55 @@
+= ACM and Azure Arc
+Ygal Blum <yblum@redhat.com>
+:toc:
+
+== Background
+Azure Arc is a single pane of glass solution to which users can connect different types of resource management systems and manage it all from Arc. Such resources may be physical or virtual servers, K8S clusters of different kinds, SQL servers, VMware vSphere, System Center VMM or Azure Stack HCI. Once connected, Arc provides a per type UI for monitoring and resource provisioning.
+
+== Proposed Design
+The integration between Azure ARC and ACM should include two separate aspects
+
+=== Manage ACM via Azure ARC
+Users should be able to connect their ACM to Azure ARC to manage and monitor it
+[plantuml, target=Connect, format=png]
+....
+@startuml
+actor User as User Order 1
+participant "Azure Arc" as ARC Order 2
+participant "Advanced Cluster Management" as ACM Order 3
+participant "OpenShift Cluster" as OCP Order 4
+
+title Connect ACM to Azure Arc
+
+User -> ACM: Connect to ARC
+ACM -> ARC: Connect
+User <--o ARC: New ACM
+....
+
+=== Provision an OpenShift Cluster and Connect it to Azure ARC
+[plantuml, target=Provision, format=png]
+....
+@startuml
+actor User as User Order 1
+participant "Azure Arc" as ARC Order 2
+participant "Advanced Cluster Management" as ACM Order 3
+participant "OpenShift Cluster" as OCP Order 4
+
+title Provision new OCP Cluster
+
+User -> ARC: Provision new OCP Cluster
+ARC -> ACM: Provision new OCP Cluster
+ACM -> OCP: Provision
+ACM <-- OCP: Provision Complete
+ACM -> OCP: Connect to ARC
+OCP -> ARC: Connect
+User <--o ARC: New OCP
+@enduml
+....
+
+== Research
+Since ACM is basically an OCP cluster with specific operators, I wanted to see Arc's offering for K8S clusters. To try it out, I spun a Kind K8S cluster and connected it to Arc. Once connected, I could see the different resources on my cluster and also able to create resources of my own. Since ACM uses CRDs, I wanted to see if the current K8S support allowed managing (or at least for a PoC level, just creating) custom resources. For that, I used as a reference the Certificate Manager Operator. However, I found that the support was limited to the resource types supported by the UI. As a result, I could not see or create any custom resources. All I could create were the basic types - Namespaces, Workload types (e.g. Deployments, Jobs etc.),  Services, Ingresses, Storage type (PVC, etc.), ConfigMap and Secrets.
+
+I also tried looking for any source code or documentation that describes the API between the Arc agents I installed on the cluster and Azure Arc itself, but could not find any. I mainly wanted to understand how per-resource-type the API was. So, while I did not find any, my feeling is that it is very type specific as it is tied also to the UI.
+
+== Summary
+To summarize, I think that deploying bare metal OpenShift clusters using Azure Arc via ACM is technically doable. But, since Azure Arc is currently not pluggable and everything seems to be closed source, adding the support will require cooperation with Microsoft.
