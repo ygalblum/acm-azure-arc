@@ -25,7 +25,9 @@ User <--o ARC: New ACM
 ....
 
 === Provision an OpenShift Cluster and Connect it to Azure ARC
-[plantuml, target=Provision, format=png]
+Once ACM is connected to Azure ARC, users should be able to use the latter to provision new OpenShift clusters and have them connect to it automatically
+
+[plantuml, target=Provision, format=svg]
 ....
 @startuml
 actor User as User Order 1
@@ -33,7 +35,7 @@ participant "Azure Arc" as ARC Order 2
 participant "Advanced Cluster Management" as ACM Order 3
 participant "OpenShift Cluster" as OCP Order 4
 
-title Provision new OCP Cluster
+title Provision a new OCP Cluster
 
 User -> ARC: Provision new OCP Cluster
 ARC -> ACM: Provision new OCP Cluster
